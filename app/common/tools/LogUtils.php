@@ -1,5 +1,9 @@
 <?php
+
 namespace app\common\tools;
+
+use think\Db;
+
 /**
  * Created by 1211.withsawyer.
  * User: Sawyer Yang
@@ -20,5 +24,15 @@ class LogUtils
         fwrite($fp, "执行日期：" . strftime("%Y%m%d%H%M%S", time()) . "\n" . $msg . "\r\n\r\n");
         flock($fp, LOCK_UN);
         fclose($fp);
+    }
+
+    /**
+     * 用户日志
+     * @param $data
+     * @return int|string
+     */
+    public static function userRunningLog($data)
+    {
+        return Db::name('user_login_running')->insert($data);
     }
 }

@@ -17,8 +17,12 @@ return [
 
     // 首页
     'index'         => 'home/index/index',
+    // 登陆页面
+    'login'         => 'home/user/login',
     // 注册页面
     'enroll/:visit' => ['home/user/register', ['method' => 'get'], ['visit' => '\w*']],
     // 提交注册地址
     'doRgt/:visit'  => ['home/user/register', ['method' => 'get|post'], ['visit' => '\w*']],
+    // 发送验证码
+    'sendVerify'    => 'home/user/sendVerify',
 ];

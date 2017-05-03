@@ -19,7 +19,7 @@ $(document).ready(function () {
         if (verify_btn_flag === true) {
             verify_btn_flag = false; // 防止同时多次发送
             settime('Verify_btn'); // 按钮设置倒计时
-            $.post(web_url + 'home/user/sendVerify.html', {
+            $.post(web_url + 'sendVerify', {
                 email_address: Email,
                 btn_verify_code: btnVerifyCode
             }, function (json) {

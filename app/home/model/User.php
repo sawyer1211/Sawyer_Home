@@ -2,7 +2,9 @@
 
 namespace app\home\model;
 
-use think\Model;
+use app\common\consts\MsgConst;
+use app\common\consts\UserConst;
+use app\common\model\BaseModel;
 
 /**
  * Created by 1211.withsawyer.
@@ -10,7 +12,7 @@ use think\Model;
  * Date: 2017/4/26
  * Time: 16:43
  */
-class User extends Model
+class User extends BaseModel
 {
     protected $pk = 'uid';
     protected $name = 'user_manage';
@@ -23,11 +25,23 @@ class User extends Model
         //TODO:自定义的初始化
     }
 
-    public function doRegister($nickname, $user_name, $password, $re_password, $email, $verify)
+
+    /**
+     * 提交注册信息
+     * @param $data
+     */
+    public function doRegister($data)
     {
+        $checkUserRes = $this->fetchSql(true)->where('u_state', 'NEQ', MsgConst::DELETE_CODE)->whereOr('u_email', $data['u_email'])->where("u_user_name", $data['u_user_name'])->count();
+        dump($checkUserRes);die;
 
+        $result = $this->insert($data);
+        if (false === $result) {
+            $this->arrayReturn(MsgConst::FAIL_CODE, '注册失败');
+        } else {
+            $this->arrayReturn(MsgConst::SUCCESS_CODE, '注册成功');
+        }
     }
-
 
 
 }

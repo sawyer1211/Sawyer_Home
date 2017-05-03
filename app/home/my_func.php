@@ -16,9 +16,11 @@ use think\Config;
 function _myMd5($str, $frequency = 1)
 {
     for ($i = 1; $i <= $frequency; $i++) {
-        $str = _myMd5($str);
+        $str = md5($str);
     }
     return $str;
+
+
 }
 
 /**

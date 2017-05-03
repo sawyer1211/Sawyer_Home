@@ -9,8 +9,10 @@
 namespace app\home\controller;
 
 
+use app\common\consts\UserConst;
 use app\common\controller\BaseController;
 use app\common\consts\MsgConst;
+use app\common\tools\LogUtils;
 use think\Config;
 use think\Db;
 use think\Loader;
@@ -20,9 +22,34 @@ use think\Session;
 class User extends BaseController
 {
 
+//    public function __destruct()
+//    {
+//        if (Config::get('isTest') == 1) {
+//            // 程序总共执行多少时间
+//            $END_TIME = explode(' ', microtime());
+//            $USE_TIME = $END_TIME[0] + $END_TIME[1] - ($this->START_TIME[0] + $this->START_TIME[1]);
+//            echo '总耗时' . round($USE_TIME, 5) . '秒';
+//        }
+//    }
+
     public function login()
     {
-        return $this->view->fetch('user/login');
+        $footer_text = [
+            0 => [
+                'en' => 'If it is not too concerned about, and how they will lose their temper.',
+                'cn' => '若不是太在意，又怎会乱发脾气',
+            ],
+            1 => [
+                'en' => 'If we can only encounter each other rather than stay with each other,then I wish we had never encountered.',
+                'cn' => '如果只是遇见，不能停留，不如不遇见。',
+            ],
+            2 => [
+                'en' => 'People always can not because of the beautiful moonlight, and has been wandering in the dark.',
+                'cn' => '人总不能因为贪恋月色的美好，而一直徘徊于黑夜之中。',
+            ],
+        ];
+        $footer_text = $footer_text[mt_rand(0, 2)];
+        return $this->view->fetch('user/login', ['footer_text' => $footer_text]);
     }
 
     public function sendVerify()
@@ -72,9 +99,14 @@ class User extends BaseController
             // 邮件内容
             $emailArr['content'] = $emailContent;
             // 存入验证码信息
-            $doValidateRes = $this->doValidate($sendAddress, $verifyCode, $checkCode, $verityTemplateResult['verify_name'], _getClientIp());
+            $doValidateRes = $this->_doValidate($sendAddress, $verifyCode, $checkCode, $verityTemplateResult['verify_name'], _getClientIp());
             if (MsgConst::SUCCESS_CODE === $doValidateRes['retCode']) {
-                // 信息存入成功才发送验证码
+                // 信息存入成功才发送验证码(生产模式才发送邮件)
+//                if ($this->test == 1) {
+//                    $sendVerifyAction = true;
+//                } else {
+//                    $sendVerifyAction = _sendEmail($emailArr);
+//                }
                 $sendVerifyAction = _sendEmail($emailArr);
             } else {
                 $this->ajaxReturn($doValidateRes['retCode'], $doValidateRes['retMsg']);
@@ -91,7 +123,6 @@ class User extends BaseController
             $this->ajaxReturn(MsgConst::FAIL_CODE, '找不到发送验证码的方式');
         }
     }
-
 
     /**
      * 用户注册
@@ -110,10 +141,12 @@ class User extends BaseController
             $password = Request::instance()->post('password');                // 密码
             $re_password = Request::instance()->post('re_password');          // 确认密码
             $email = Request::instance()->post('email');                      // 邮箱地址
-            $verify = Request::instance()->post('verify');                    // 验证码
-            $checkCode = Session::get('checkCode');                                 // 校验码
-            if (empty($user_name)) {
-                $this->ajaxReturn(MsgConst::LEGAL_CODE, '请输入用户名');
+            $verifyCode = Request::instance()->post('verify_code');               // 验证码
+            $clientIp = _getClientIp();
+            $checkCode = Session::get('checkCode');                           // 校验码
+            // 验证数据正确性
+            if (!_checkUserName($user_name)) {
+                $this->ajaxReturn(MsgConst::LEGAL_CODE, '请输入正确用户名');
             }
             if (empty($password)) {
                 $this->ajaxReturn(MsgConst::LEGAL_CODE, '请输入密码');
@@ -121,48 +154,92 @@ class User extends BaseController
             if (empty($re_password)) {
                 $this->ajaxReturn(MsgConst::LEGAL_CODE, '请再次输入密码');
             }
-            if (empty($re_password)) {
-                $this->ajaxReturn(MsgConst::LEGAL_CODE, '请再次输入密码');
+            if (mb_strlen($password) < 8 || mb_strlen($password) > 20) {
+                $this->ajaxReturn(MsgConst::LEGAL_CODE, '密码不能小于8位或大于20位');
             }
+            if ($password != $re_password) {
+                $this->ajaxReturn(MsgConst::LEGAL_CODE, '两次密码不相符');
+            }
+            // 检查验证码是否正确
+            $checkVerifyCode = $this->_checkVerifyCode($email, $verifyCode, $checkCode, 'user_register', Config::get('SEND_VERIFY_TYPE'));
+            if ($checkVerifyCode['retCode'] != MsgConst::SUCCESS_CODE) {
+                $this->ajaxReturn($checkVerifyCode['retCode'], $checkVerifyCode['retMsg']);
+            }
+            // 加密密码（不可随意更改）
+            $password = _myMd5($password, Config::get('PASS_ENCRYPT_TIMES'));
+            $arrDoRegisterData = [
+                'u_nickname'    => $nickname,
+                'u_user_name'   => $user_name,
+                'u_email'       => $email,
+                'u_password'    => $password,
+                'u_create_time' => $this->nowTime,
+                'u_is_test'     => $this->test,
+                'u_state'       => UserConst::USER_NORMAL,
+            ];
             $userModel = Loader::model('User');
-            $arrResult = $userModel->doRegister($nickname, $user_name, $password, $re_password, $email, $verify);
-        } else {
+            $arrResult = $userModel->doRegister($arrDoRegisterData);
+            $uid = $userModel->getLastInsID();
+            if ($arrResult['retCode'] != MsgConst::SUCCESS_CODE) {
+                $this->ajaxReturn($checkVerifyCode['retCode'], $checkVerifyCode['retMsg']);
+            }
+            $userRunningData = [
+                'ur_uid'        => $uid,
+                'ur_user_name'  => $user_name,
+                'ur_client_ip'  => $clientIp,
+                'ur_login_time' => $this->nowTime,
+                'ur_note'       => '用户注册成功自动登陆',
+            ];
+            LogUtils::userRunningLog($userRunningData);
 
+            $sessionData = [
+                'uid'       => $uid,
+                'user_name' => $user_name,
+            ];
+            // 存入登陆信息
+            Session::set('withsawyer_user_info', $sessionData);
+            $this->ajaxReturn($checkVerifyCode['retCode'], $checkVerifyCode['retMsg']);
+        } else {
+            $this->_empty();
         }
     }
 
 
     /**
      * 验证验证码是否正确
-     * @param string $tel
-     * @param string $verifyCode
-     * @param string $check_code
-     * @param string $type
+     * @param        $source
+     * @param        $verifyCode
+     * @param        $checkCode
+     * @param        $tempName
+     * @param string $sendType
      * @return array
      */
-    private function checkVerifyCode($tel, $verifyCode, $check_code, $type)
+    private function _checkVerifyCode($source, $verifyCode, $checkCode, $tempName, $sendType = 'EMAIL')
     {
 
-        $validateModel = M('sms_validate');
-        $data = $validateModel->where("v_tel='$tel' AND v_code='$verifyCode' AND v_list='$check_code' AND v_class='$type'")->find();
+        $validateModel = Db::name('verify_validate');
+        $where = [
+            'v_source'     => $source,
+            'v_code'       => $verifyCode,
+            'v_check_code' => $checkCode,
+            'v_temp_name'  => $tempName,
+        ];
+        $data = $validateModel->fetchSql(false)->where($where)->find();
         $returnMsg = [];
         if (!$data) {
-            $returnMsg['retCode'] = false;
+            $returnMsg['retCode'] = MsgConst::FAIL_CODE;
             $returnMsg['retMsg'] = "验证码错误!";
-
             return $returnMsg;
         }
         $nowTime = time();
-        $checkTime = C('MOBILE_VERIFY_VALID_TIME') * 60;
+        $checkTime = Config::get('VERIFY_CODE_VALID_TIME') * 60;
         $sendTime = $data['v_time'];
-        if (($nowTime - $sendTime) > $checkTime) {
-            $returnMsg['retCode'] = false;
+        if ((intval($nowTime) - intval($sendTime)) > $checkTime) {
+            $returnMsg['retCode'] = MsgConst::FAIL_CODE;
             $returnMsg['retMsg'] = "验证码已过期!";
 
             return $returnMsg;
         }
-        $returnMsg['retCode'] = true;
-
+        $returnMsg['retCode'] = MsgConst::SUCCESS_CODE;
         return $returnMsg;
     }
 
@@ -176,7 +253,7 @@ class User extends BaseController
      * @param $clientIp
      * @return array
      */
-    private function doValidate($source, $code, $checkCode, $tempName, $clientIp)
+    private function _doValidate($source, $code, $checkCode, $tempName, $clientIp)
     {
         if (empty($source) || empty($code) || empty($checkCode) || empty($tempName)) {
             return [
@@ -186,11 +263,12 @@ class User extends BaseController
         }
         $nowTime = time();
         $verifyValidateModel = Db::name('verify_validate');
-        $findRes = $verifyValidateModel->field('')->where([
+        $findRes = $verifyValidateModel->fetchSql(true)->where([
             'v_source' => ['EQ', $source],
         ])->whereOr([
             'v_client_ip' => ['EQ', $clientIp],
         ])->order('id desc')->find();
+        dump($findRes);die;
         // 十秒内不要频繁发送
         $VERIFY_SEND_INTERVAL_TIMES = Config::get('VERIFY_SEND_INTERVAL_TIMES');
         if ($findRes && (intval($findRes['v_time']) > intval($nowTime + $VERIFY_SEND_INTERVAL_TIMES))) {

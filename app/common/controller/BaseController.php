@@ -12,17 +12,20 @@ use think\View;
 
 class BaseController extends Controller
 {
-    protected $START_TIME = ''; // 程序开始执行的时间
-    protected $arrUserInfo = [];
-    private $current_action_name;
-    private $current_controller_name;
+    protected $START_TIME = '';             // 程序开始执行的时间
+    protected $arrWebPage = [];             // 网站基本信息
+    protected $arrUserInfo = [];            // 用户登陆信息
+    private $current_controller_name;       // 当前操作的控制器
+    private $current_action_name;           // 当前操作的方法名
+    protected $nowTime = '';
+    protected $test = 0;                    // 当前项目模式【0-生产模式 1-开发模式】
 
     private $access_permission = [
         'Index' => [
-            'index',
+            '',
         ],
         'User'  => [
-
+            'login', 'register', 'sendVerify',
         ],
     ];
 
@@ -35,27 +38,40 @@ class BaseController extends Controller
         return $token;
     }
 
+
+    /**
+     * 先执行一些配置的方法
+     */
     public function _initialize()
     {
-        $this->START_TIME = explode(' ', microtime());
+        $this->test = Config::get('isTest');                                   // 当前项目模式【0-生产模式 1-开发模式】
+        $this->nowTime = time();                                                      // 当前时间戳
+        $this->START_TIME = explode(' ', microtime());                      // 程序开始的微秒
         $view = new View();
         $this->current_action_name = $this->request->action();
         $this->current_controller_name = $this->request->controller();
-        $arrWebPage = $this->getWebPageInfo();                              // 获取网站信息
-        $this->assign('arrWebPage', $arrWebPage);                    // 定义变量
-        $this->checkAuth();                                                 // 自动验证登陆信息
+        $this->arrWebPage = $this->getWebPageInfo(true);                     // 获取网站信息
+        $this->assign('arrWebPage', $this->arrWebPage);                        // 定义变量
+        $this->checkAuth();                                                           // 自动验证登陆信息
     }
 
+    /**
+     * 检查权限信息
+     */
     private function checkAuth()
     {
+        // 获取用户session信息
         $this->arrUserInfo = Session::get('withsawyer_user_info');
+        // 检查当前访问的控制器是否存在
         if (array_key_exists($this->current_controller_name, $this->access_permission)) {
-            if (in_array($this->current_action_name, $this->access_permission[$this->current_controller_name])) {
+            // 检查当前访问的方法名如果不在定义中就需要登陆
+            if (!in_array($this->current_action_name, $this->access_permission[$this->current_controller_name])) {
                 if (false === Session::has('withsawyer_user_info') || empty($this->arrUserInfo['uid'])) {
-                    $this->redirect("User/login");
+                    $this->redirect(url('/login'));
                 }
             }
         } else {
+            // 否则404
             $this->_empty();
         }
     }
@@ -68,17 +84,17 @@ class BaseController extends Controller
     private function getWebPageInfo($refresh = false)
     {
         Cache::connect(Config::get('cache'));
-        $arrWebPage = Cache::get('arrWebPage');
-        if (empty($arrWebPage) || false === $arrWebPage || true === $refresh) {
-            $arrWebPage = [];
+        $this->arrWebPage = Cache::get('arrWebPage');
+        if (empty($this->arrWebPage) || false === $this->arrWebPage || true === $refresh) {
+            $this->arrWebPage = [];
             $objParamSettingModel = Db::name('system_param_setting');
-            $objWebPageRes = $objParamSettingModel->field('set_name,set_value')->where('set_type', 'webpage')->select();
+            $objWebPageRes = $objParamSettingModel->field('set_name,set_key,set_value')->where('set_type', 'webpage')->select();
             foreach ($objWebPageRes AS $setValue) {
-                $arrWebPage[$setValue['set_name']] = $setValue['set_value'];
+                $this->arrWebPage[$setValue['set_key']] = $setValue['set_value'];
             }
-            Cache::set('arrWebPage', $arrWebPage);
+            Cache::set('arrWebPage', $this->arrWebPage);
         }
-        return $arrWebPage;
+        return $this->arrWebPage;
     }
 
     /**
@@ -96,7 +112,7 @@ class BaseController extends Controller
         if ($data) {
             $returnData['data'] = _dataToUrlEncode(_arrayFilterNull($data));
         }
-        if (Config::get('isTest') == 1) {
+        if ($this->test == 1) {
             // 开发模式才返回【参数说明】
             if ($explain) {
                 $returnData['explain'] = _dataToUrlEncode(_arrayFilterNull($explain));
