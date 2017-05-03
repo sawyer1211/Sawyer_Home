@@ -1,0 +1,29 @@
+<style>
+    .container {
+        width: 1300px;
+        height: 703px;
+        background: url({background_image});
+        background-size: cover;
+        margin: 10px auto;
+        overflow: hidden;
+    }
+    .verify-box {
+        width: 150px;
+        height: 50px;
+        line-height: 50px;
+        text-align: center;
+        margin: 131px 0px 0px 329px;
+        font-size: 30px;
+        letter-spacing: 5px;
+        font-family: "Tekton Pro";
+        color: red;
+        -webkit-mask-image: -webkit-gradient(linear, 0 0, 0 bottom, from(red), to(rgba(0, 0, 0, 0)));
+        mask-image: -webkit-gradient(linear, 0 0, 0 bottom, from(red), to(rgba(0, 0, 0, 0)));
+    }
+</style>
+<body style="position: relative">
+
+<div class="container">
+    <div class="verify-box">{verify_code}</div>
+</div>
+</body>

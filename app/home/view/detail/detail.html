@@ -1,0 +1,99 @@
+<include file="Common/header"/><!--头部-->
+<html>
+<body>
+<div class="footer_mobile">
+    <div class="shortcut_mobile">
+        <a class="mobile_previous" href="{$article.prev_url}">Previous</a>
+        <a class="mobile_next" href="{$article.next_url}">Next</a>
+    </div>
+</div>
+<div class="shortcut_btn">
+    <a class="shortcut_previous" href="{$article.prev_url}"></a>
+    <a class="shortcut_next" href="{$article.next_url}"></a>
+</div>
+<div class="Header Header_detail">
+    <include file="Common/menu"/><!--导航-->
+</div>
+<div class="Detail_content">
+    <div class="D_title no-select animated fadeInLeft">{$article.a_title}</div>
+    <div class="D_type no-select">{$article.a_tag}</div>
+</div>
+<div class="Detail_content">
+    <div class="content_text">{$article.a_content}</div>
+</div>
+<div class="Detail_content">
+    <div class="comment_title">娓娓而谈</div>
+    <!--<script id="comment_1" name="content" type="text/plain">这里写你的初始化内容</script>-->
+    <div class="comment_box">
+        <textarea class="comment_text" placeholder="发表您的观点......"></textarea>
+        <div class="comment_foot">
+            <button class="comment_btn a_Btn fr">发　　布</button>
+        </div>
+    </div>
+</div>
+<div class="Detail_content">
+    <div class="comment_area_title">最新评论</div>
+    <div class="comment_area_list">
+        <div class="comment_area">
+            <div class="con_head fl">
+                <a href="javascript:;"><img src="__ROOT__/system/UploadFiles/headface/20-084134_497.jpg" alt=""></a>
+            </div>
+            <div class="con_msg">
+                <div class="con_unified_style con_user_tm">
+                    <a href="javascript:;" class="fl cm_name">杨老大</a><span class="fr cm_time">2016-10-05 12:51:31</span>
+                </div>
+                <span class="cl"></span>
+                <div class="con_unified_style con_issue tj c6">“国家权力机关的监督、行政监察的监督、社会监督、舆论监督等等。这些监督主体除了加强自身的软硬件建设，互相之间还需要充分信任和协调，方能形成一个完整的体系，让监督不流于形式。”。一句话可以概括，就是对权利的监督机制。</div>
+                <span class="cl"></span>
+                <div class="con_unified_style Btns-bars">
+                    <div class="fr">
+                        <b class="gb-spacing"></b>
+                        <span class="click_support theme-color">
+                            <a href="javascript:;" class="theme-color">
+                                <i class="icon-wd icon-support"></i>
+                                <em>156</em>
+                            </a>
+                        </span>
+                        <b class="gb-spacing"></b>
+                        <span class="click_reply"><a href="javascript:;" class="theme-color">回复</a></span>
+                        <b class="gb-spacing"></b>
+                    </div>
+                </div>
+            </div>
+            <span class="cl"></span>
+        </div>
+        <div class="comment_area">
+            <div class="con_head fl">
+                <a href="javascript:;"><img src="__ROOT__/system/UploadFiles/headface/20-084134_497.jpg" alt=""></a>
+            </div>
+            <div class="con_msg">
+                <div class="con_unified_style con_user_tm">
+                    <a href="javascript:;" class="fl cm_name">凉皮</a><span class="fr cm_time">2016-10-05 12:51:31</span>
+                </div>
+                <span class="cl"></span>
+                <div class="con_unified_style con_issue tj c6">对于冤假错案的频发，究其根源是司法制度有漏洞。什么呢，就是-- 发回重审---，自己定错了，自己改正那太难了。为什么不上级设专门机构来重审呢，起到裁判作用。发回重审，就是冤假错案难于纠正的根本原因。</div>
+                <div class="con_unified_style Btns-bars">
+                    <div class="fr">
+                        <b class="gb-spacing"></b>
+                        <span class="click_support theme-color">
+                            <a href="javascript:;" class="theme-color">
+                                <i class="icon-wd icon-support"></i>
+                                <em>156</em>
+                            </a>
+                        </span>
+                        <b class="gb-spacing"></b>
+                        <span class="click_reply"><a href="javascript:;" class="theme-color">回复</a></span>
+                        <b class="gb-spacing"></b>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="cl"></div>
+<div class="footer_back">
+    <a class="back_btn" href="../../">Go back</a>
+</div>
+<script type="text/javascript" src="__PUBLIC__/Home/js/detail.js"></script>
+</body>
+</html>

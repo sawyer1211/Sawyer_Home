@@ -1,0 +1,31 @@
+<!--
+ * Created by PhpStorm.
+ * User: Sawyer_Yang
+ * Date: 2016/5/31
+ * Time: 14:04
+ */-->
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{$arrWebPage.webpage_title}</title>
+    <link rel="stylesheet" href="__PUBLIC__/home/css/common.css?{:mt_rand(1,99)}" type="text/css">  <!--公共样式-->
+    <link rel="stylesheet" href="__PUBLIC__/home/css/style.css?{:mt_rand(1,99)}" type="text/css">   <!--样式表-->
+    <link href="__PUBLIC__/favicon.ico?{:mt_rand(1,99)}" rel="shortcut icon">   <!--Title图标-->
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta http-equiv="keywords" content="Sawyer,HOME">
+    <meta name="description" content="Sawyer's Home"/>
+    <meta name="author" content="Sawyer Yang"/>
+    <meta name="Resource-type" content="Document"/>
+    <script src="__PUBLIC__/home/js/jquery1.11.3.js?{:mt_rand(1,99)}"></script>
+    <script src="__PUBLIC__/home/js/layer/layer.js?{:mt_rand(1,99)}"></script>   <!--Layer弹窗插件-->
+    <script src="__PUBLIC__/home/js/my_func.js?{:mt_rand(1,99)}"></script>   <!--函数库-->
+    <script>
+        var web_url = '__ROOT__';
+    </script>
+    <!--[if lte IE 9]>
+    <p class="browsehappy" style="font-size: 50px;">你正在使用<strong>过时</strong>的浏览器，本网站暂不支持。 请 <a
+            href="http://browsehappy.com/" target="_blank" style="color: red">升级浏览器</a>
+        以获得更好的体验！</p>
+    <![endif]-->
+</head>
