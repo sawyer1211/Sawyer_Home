@@ -1,4 +1,5 @@
 <?php
+
 namespace app\home\controller;
 
 
@@ -8,9 +9,8 @@ class Index extends BaseController
 {
     public function index()
     {
-        return '1222223';
+        return $this->view->fetch('index/index');
     }
-
 
 
 }

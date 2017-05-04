@@ -26,7 +26,7 @@ class BaseController extends Controller
             '',
         ],
         'User'  => [
-            'login', 'register', 'sendVerify',
+            'login', 'register', 'sendVerify', 'validateCodeImage',
         ],
     ];
 
@@ -48,7 +48,6 @@ class BaseController extends Controller
         $this->test = Config::get('isTest');                                   // 当前项目模式【0-生产模式 1-开发模式】
         $this->nowTime = time();                                                      // 当前时间戳
         $this->START_TIME = explode(' ', microtime());                      // 程序开始的微秒
-        $view = new View();
         $this->current_action_name = $this->request->action();
         $this->current_controller_name = $this->request->controller();
         $this->arrWebPage = $this->getWebPageInfo(true);                     // 获取网站信息
@@ -69,12 +68,16 @@ class BaseController extends Controller
             // 检查当前访问的方法名如果不在定义中就需要登陆
             if (!in_array($this->current_action_name, $this->access_permission[$this->current_controller_name])) {
                 if (false === Session::has($this->session_user_info_name) || !_checkInt($this->arrUserInfo['uid'])) {
-//                    $this->redirect(url('/login/view'));
+                    if ($this->test != 1) {
+                        $this->redirect(url('/login/view'));
+                    }
                 }
             } elseif (in_array($this->current_action_name, $this->access_permission[$this->current_controller_name])) {
-//                if (true === Session::has($this->session_user_info_name) || _checkInt($this->arrUserInfo['uid'])) {
-//                    $this->redirect(url('/index'));
-//                }
+                if (true === Session::has($this->session_user_info_name) || _checkInt($this->arrUserInfo['uid'])) {
+                    if ($this->test != 1) {
+                        $this->redirect(url('/index'));
+                    }
+                }
             }
         } else {
             // 否则404

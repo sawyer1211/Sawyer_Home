@@ -15,6 +15,7 @@ use app\common\consts\MsgConst;
 use app\common\tools\LogUtils;
 use app\common\tools\ValidateCode;
 use think\Config;
+use think\Cookie;
 use think\Db;
 use think\Loader;
 use think\Request;
@@ -36,6 +37,7 @@ class User extends BaseController
     public function login()
     {
         $visitType = Request::instance()->param('visit');
+        $errRetryNum = Cookie::get('errRetryNum') ?: 0;
         if ($visitType == 'view') {
             $footer_text = [
                 0 => [
@@ -52,8 +54,9 @@ class User extends BaseController
                 ],
             ];
             $footer_text = $footer_text[mt_rand(0, 2)];
-            return $this->view->fetch('user/login', ['footer_text' => $footer_text]);
+            return $this->view->fetch('user/login', ['footer_text' => $footer_text, 'errRetryNum' => $errRetryNum]);
         } elseif ($visitType == 'doLogin') {
+//            $errRetryNum = Cookie::get('errRetryNum') ?: 0;
             $account = Request::instance()->post('account');              // 帐号（用户名或邮箱）
             $password = Request::instance()->post('password');            // 密码
             // 验证数据正确性
@@ -67,7 +70,6 @@ class User extends BaseController
                 $this->ajaxReturn(MsgConst::LEGAL_CODE, '密码不能小于8位或大于20位');
             }
             // 获取到登陆失败的次数如果大于三次就要输入验证码
-            $errRetryNum = Session::get('errRetryNum') ?: 0;
             if ($errRetryNum > 3) {
                 $verify_code = Request::instance()->post('verify_code');      // 验证码
                 // 判断是否填写验证码
@@ -85,7 +87,7 @@ class User extends BaseController
             if (!$checkUserRes) {
                 // 登录出错 重试次数+1 等于3的时候就需要验证码了
                 $errRetryNum += 1;
-                Session::set('errRetryNum', $errRetryNum);
+                Cookie::set('errRetryNum', $errRetryNum);
                 $this->ajaxReturn(MsgConst::FAIL_CODE, '帐号或密码错误，请重试...', [
                     'errRetryNum' => $errRetryNum,
                 ]);
@@ -106,7 +108,7 @@ class User extends BaseController
             // 存入登陆信息
             Session::set($this->session_user_info_name, $sessionData);
             // 登录成功后重试次数就清零
-            Session::set('errRetryNum', 0);
+            Cookie::set('errRetryNum', 0);
             $this->ajaxReturn(MsgConst::SUCCESS_CODE, '注册成功，页面即将跳转...');
         } else {
             $this->_empty();
@@ -259,7 +261,7 @@ class User extends BaseController
             // 存入登陆信息
             Session::set($this->session_user_info_name, $sessionData);
             // 登录成功后重试次数就清零
-            Session::set('errRetryNum', 0);
+            Cookie::set('errRetryNum', 0);
             $this->ajaxReturn(MsgConst::SUCCESS_CODE, '注册成功，页面即将跳转...');
         } else {
             $this->_empty();

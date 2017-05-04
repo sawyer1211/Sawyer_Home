@@ -1,12 +1,14 @@
-<include file="Common/header"/><!--头部-->
+{include file="common/header"/}<!--头部-->
 <body>
 <div class="Header animated fadeInUp pt">
-    <include file="Common/menu"/><!--导航-->
+    {include file="common/menu"/}<!--头部-->
 </div>
 <div class="WelcomeSlogan">
     <div class="title">
-        <div class="line animated fadeInLeft no-select">{$Welcome_title.0.type_content}</div>
-        <div class="line animated fadeInRight no-select" style="text-indent: 130px;padding-top: 10px;">{$Welcome_title.1.type_content}</div>
+        <div class="line animated fadeInLeft no-select">asdsadsadsadsa</div>
+        <div class="line animated fadeInRight no-select" style="text-indent: 130px;padding-top: 10px;">
+            asdasdsadsadsadsa
+        </div>
     </div>
 </div>
 <div class="HotTopic">
@@ -14,14 +16,24 @@
         <div class="Hot_title">热门话题</div>
     </div>
     <div class="Hot">
-        <volist name="article" id="vo">
-            <div class="Hot_line animated fadeInUp">
-                <a href="{:U('Detail/detail',array('article'=>$vo[id]))}">
-                    <div class="project_title">{$vo.a_title}</div>
-                    <div class="project_info">{$vo.a_tag}</div>
-                </a>
-            </div>
-        </volist>
+        <div class="Hot_line animated fadeInUp">
+            <a href="#">
+                <div class="project_title">asdsad</div>
+                <div class="project_info">asdsa</div>
+            </a>
+        </div>
+        <div class="Hot_line animated fadeInUp">
+            <a href="#">
+                <div class="project_title">asdsad</div>
+                <div class="project_info">asdsa</div>
+            </a>
+        </div>
+        <div class="Hot_line animated fadeInUp">
+            <a href="#">
+                <div class="project_title">asdsad</div>
+                <div class="project_info">asdsa</div>
+            </a>
+        </div>
     </div>
 </div>
 <div class="Footer">

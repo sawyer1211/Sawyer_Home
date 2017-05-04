@@ -7,10 +7,10 @@
            class="login_input login_input_box login_spacing animated fadeInUp">
     <input type="password" placeholder="Password" name="password" id="password"
            class="login_input login_input_box login_spacing animated fadeInUp">
-    <div class="login_input login_spacing animated fadeInUp" style="display: none" id="Graphic-Verify-Div">
+    <div class="login_input login_spacing animated fadeInUp" style='{if condition="$errRetryNum lt 3"}display:none{/if}' id="Graphic-Verify-Div">
         <input type="text" name="verify_code" id="verify_code" placeholder="输入验证码"
                class="Verify_input login_input_box fl">
-        <div class="Graphic-Verify-box fr"><img src="{:url('user/validateCodeImage').'?'.mt_rand(10,99)}" data-url="{:url('user/validateCodeImage')}"
+        <div class="Graphic-Verify-box fr"><img src="{:url('/GraphicVerifyCode').'?'.mt_rand(10,99)}" data-url="{:url('/GraphicVerifyCode')}"
                                                 class="validate-Code-Image"/></div>
     </div>
     <div class="cl"></div>

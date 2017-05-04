@@ -25,5 +25,4 @@ return [
     'VERIFY_CODE_VALID_TIME'               => 120,                                          // 验证码过期时间(秒)
     'UPLOAD_IMAGES_SIZE_LIMIT'             => 2097152,                                      // 上传图片大小限制（字节）
 
-
 ];
