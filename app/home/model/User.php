@@ -33,7 +33,7 @@ class User extends BaseModel
     public function doRegister($data)
     {
         $checkUserRes = $this->fetchSql(true)->where('u_state', 'NEQ', MsgConst::DELETE_CODE)->whereOr('u_email', $data['u_email'])->where("u_user_name", $data['u_user_name'])->count();
-        dump($checkUserRes);die;
+        dump($checkUserRes);die;//
 
         $result = $this->insert($data);
         if (false === $result) {
