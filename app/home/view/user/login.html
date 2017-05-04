@@ -3,14 +3,24 @@
 <body>
 <div class="login_box">
     <div class="login_title tc animated fadeInUp"><a href="#">Welcome to Sawyer's Home.</a></div>
-    <input type="text" placeholder="Email" class="login_input login_input_box login_spacing animated fadeInUp">
-    <input type="password" placeholder="Password" class="login_input login_input_box login_spacing animated fadeInUp">
-    <button class="from_Btn login_btn login_spacing animated fadeInUp">Sign In</button>
+    <input type="text" placeholder="User Name / Email" name="account" id="account"
+           class="login_input login_input_box login_spacing animated fadeInUp">
+    <input type="password" placeholder="Password" name="password" id="password"
+           class="login_input login_input_box login_spacing animated fadeInUp">
+    <div class="login_input login_spacing animated fadeInUp">
+        <input type="text" name="verify_code" id="verify_code" placeholder="输入验证码"
+               class="Verify_input login_input_box fl">
+        <div class="Graphic-Verify-box fr"><img src="{:url('user/validateCodeImage').'?'.mt_rand(10,99)}" data-url="{:url('user/validateCodeImage')}"
+                                                class="validate-Code-Image"/></div>
+    </div>
+    <div class="cl"></div>
+    <button class="from_Btn login_btn login_spacing animated fadeInUp" id="do-login-btn">Sign In</button>
     <div class="login_input redirect_reg tr animated fadeInUp"><a href="{:url('/enroll/view')}">没有账号？立即注册
         ></a></div>
     <div class="Postscript PS_spacing animated fadeInLeft">{$footer_text.en}</div>
     <div class="Postscript animated fadeInRight">{$footer_text.cn}</div>
 </div>
+<script src="__PUBLIC__/home/js/user/Sawyer_landing_related.js?{:mt_rand(1,90)}"></script>
 <script src="__PUBLIC__/home/js/supersized.3.2.7.min.js"></script>
 <script src="__PUBLIC__/home/js/supersized-init.js"></script>
 </body>

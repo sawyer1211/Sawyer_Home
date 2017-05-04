@@ -4,8 +4,8 @@
 $(document).ready(function () {
     var verify_btn_flag = true;
 
+    // 发送邮箱验证码
     $('#Verify_btn').click(function () {
-
         var Email = $('#Email').val();
         var btnVerifyCode = $(this).data('btn-verify-code');
         if (!_checkEmail(Email)) {
@@ -34,6 +34,7 @@ $(document).ready(function () {
         }
     })
 
+    // 提交注册信息
     $(document).on('click', '#register-btn', function () {
         // var $nickname = $('#nickname');
         var $user_name = $('#user_name');
@@ -77,7 +78,7 @@ $(document).ready(function () {
             return false;
         }
         // 加载中......
-        // var loadIndex = layer.load(2);
+        var loadIndex = layer.load(2);
         $.post(web_url + 'doRgt/doRegister.html', {
             user_name: $user_name.val(),
             password: $password.val(),
@@ -85,10 +86,61 @@ $(document).ready(function () {
             email: $Email.val(),
             verify_code: $verify_code.val(),
         }, function (json) {
-            console.log(json);
+            if (json.retCode == 1) {
+                layer.msg(json.retMsg, {time: 2000}, function () {
+                    window.location.href = web_url + 'index.html';
+                })
+            } else {
+                showMsg(json.retMsg);
+            }
+        });
+    });
 
+    // 提交登录信息
+    $(document).on('click', '#do-login-btn', function () {
+        // var $nickname = $('#nickname');
+        var $account = $('#account');
+        var $password = $('#password');
+        console.log($account.val());
+        if (!_checkUserName($account.val()) && !_checkEmail($account.val())) {
+            $account.focus();
+            showMsg('请输入用户名或者邮箱');
+            return false;
+        }
+        if ($password.val() == '') {
+            $password.focus();
+            showMsg('请输入密码');
+            return false;
+        }
+        if ($password.val().length < 8 || $password.val().length > 20) {
+            $password.focus();
+            showMsg('密码不能小于8位或大于20位');
+            return false;
+        }
+        // 加载中......
+        // var loadIndex = layer.load(2);
+        $.post(web_url + 'doLogin/doLogin.html', {
+            account: $account.val(),
+            password: $password.val(),
+        }, function (json) {
+            if (json.retCode == 1) {
+                layer.msg(json.retMsg, {time: 2000}, function () {
+                    window.location.href = web_url + 'index.html';
+                });
+            }
         });
 
     });
+
+    // 局部刷新验证码
+    $(document).on('click', '.validate-Code-Image', function () {
+        var url = $(this).data('url');
+        var newUrl = '';
+        if (url == '') {
+            return false;
+        }
+        newUrl = url + '?' + Math.floor(Math.random() * 10) + Math.floor(Math.random() * 10);
+        $(this).attr('src', newUrl);
+    })
 
 });

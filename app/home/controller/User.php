@@ -13,6 +13,7 @@ use app\common\consts\UserConst;
 use app\common\controller\BaseController;
 use app\common\consts\MsgConst;
 use app\common\tools\LogUtils;
+use app\common\tools\ValidateCode;
 use think\Config;
 use think\Db;
 use think\Loader;
@@ -34,22 +35,76 @@ class User extends BaseController
 
     public function login()
     {
-        $footer_text = [
-            0 => [
-                'en' => 'If it is not too concerned about, and how they will lose their temper.',
-                'cn' => '若不是太在意，又怎会乱发脾气',
-            ],
-            1 => [
-                'en' => 'If we can only encounter each other rather than stay with each other,then I wish we had never encountered.',
-                'cn' => '如果只是遇见，不能停留，不如不遇见。',
-            ],
-            2 => [
-                'en' => 'People always can not because of the beautiful moonlight, and has been wandering in the dark.',
-                'cn' => '人总不能因为贪恋月色的美好，而一直徘徊于黑夜之中。',
-            ],
-        ];
-        $footer_text = $footer_text[mt_rand(0, 2)];
-        return $this->view->fetch('user/login', ['footer_text' => $footer_text]);
+        $visitType = Request::instance()->param('visit');
+        if ($visitType == 'view') {
+            $footer_text = [
+                0 => [
+                    'en' => 'If it is not too concerned about, and how they will lose their temper.',
+                    'cn' => '若不是太在意，又怎会乱发脾气',
+                ],
+                1 => [
+                    'en' => 'If we can only encounter each other rather than stay with each other,then I wish we had never encountered.',
+                    'cn' => '如果只是遇见，不能停留，不如不遇见。',
+                ],
+                2 => [
+                    'en' => 'People always can not because of the beautiful moonlight, and has been wandering in the dark.',
+                    'cn' => '人总不能因为贪恋月色的美好，而一直徘徊于黑夜之中。',
+                ],
+            ];
+            $footer_text = $footer_text[mt_rand(0, 2)];
+            return $this->view->fetch('user/login', ['footer_text' => $footer_text]);
+        } elseif ($visitType == 'doLogin') {
+            $account = Request::instance()->post('account');              // 帐号（用户名或邮箱）
+            $password = Request::instance()->post('password');            // 密码
+            // 验证数据正确性
+            if (!_checkUserName($account) && !_checkEmail($account)) {
+                $this->ajaxReturn(MsgConst::LEGAL_CODE, '请检查帐号格式是否正确！');
+            }
+            if (empty($password)) {
+                $this->ajaxReturn(MsgConst::LEGAL_CODE, '请输入密码');
+            }
+            if (mb_strlen($password) < 8 || mb_strlen($password) > 20) {
+                $this->ajaxReturn(MsgConst::LEGAL_CODE, '密码不能小于8位或大于20位');
+            }
+            // 获取到登陆失败的次数如果大于三次就要输入验证码
+            $errRetryNum = Session::get('errRetryNum') ?: 0;
+            if ($errRetryNum > 3) {
+                $verify_code = Request::instance()->post('verify_code');      // 验证码
+                // 判断是否填写验证码
+                if (empty($verify_code)) {
+                    $this->ajaxReturn(MsgConst::LEGAL_CODE, '请输入验证码');
+                }
+                // 判断验证码是否正确
+                if ($verify_code != Session::get('GraphicValidateCode')) {
+                    $this->ajaxReturn(MsgConst::LEGAL_CODE, '验证码不正确');
+                }
+            }
+            // 密码加密一下
+            $password = _myMd5($password, Config::get('PASS_ENCRYPT_TIMES'));
+            $checkUserRes = Db::name('user_manage')->fetchSql(false)->where('u_state', 'NEQ', MsgConst::DELETE_CODE)->where('u_password', 'EQ', $password)->whereOr('u_email', 'EQ', $account)->where("u_user_name", 'EQ', $account)->find();
+            if (!$checkUserRes) {
+                return $this->arrayReturn(MsgConst::FAIL_CODE, '帐号或密码错误，请重试...');
+            }
+
+            $userRunningData = [
+                'ur_uid'        => $checkUserRes['uid'],
+                'ur_user_name'  => $checkUserRes['user_name'],
+                'ur_client_ip'  => _getClientIp(),
+                'ur_login_time' => $this->nowTime,
+                'ur_note'       => '用户登陆',
+            ];
+            LogUtils::userRunningLog($userRunningData);
+            $sessionData = [
+                'uid'       => $checkUserRes['uid'],
+                'user_name' => $checkUserRes['user_name'],
+            ];
+            // 存入登陆信息
+            Session::set($this->session_user_info_name, $sessionData);
+            $this->ajaxReturn(MsgConst::SUCCESS_CODE, '注册成功，页面即将跳转...');
+        } else {
+            $this->_empty();
+        }
+
     }
 
     public function sendVerify()
@@ -101,7 +156,7 @@ class User extends BaseController
             // 存入验证码信息
             $doValidateRes = $this->_doValidate($sendAddress, $verifyCode, $checkCode, $verityTemplateResult['verify_name'], _getClientIp());
             if (MsgConst::SUCCESS_CODE === $doValidateRes['retCode']) {
-                // 信息存入成功才发送验证码(生产模式才发送邮件)
+//                 信息存入成功才发送验证码(生产模式才发送邮件)
 //                if ($this->test == 1) {
 //                    $sendVerifyAction = true;
 //                } else {
@@ -141,7 +196,7 @@ class User extends BaseController
             $password = Request::instance()->post('password');                // 密码
             $re_password = Request::instance()->post('re_password');          // 确认密码
             $email = Request::instance()->post('email');                      // 邮箱地址
-            $verifyCode = Request::instance()->post('verify_code');               // 验证码
+            $verifyCode = Request::instance()->post('verify_code');           // 验证码
             $clientIp = _getClientIp();
             $checkCode = Session::get('checkCode');                           // 校验码
             // 验证数据正确性
@@ -180,7 +235,7 @@ class User extends BaseController
             $arrResult = $userModel->doRegister($arrDoRegisterData);
             $uid = $userModel->getLastInsID();
             if ($arrResult['retCode'] != MsgConst::SUCCESS_CODE) {
-                $this->ajaxReturn($checkVerifyCode['retCode'], $checkVerifyCode['retMsg']);
+                $this->ajaxReturn($arrResult['retCode'], $arrResult['retMsg']);
             }
             $userRunningData = [
                 'ur_uid'        => $uid,
@@ -190,19 +245,31 @@ class User extends BaseController
                 'ur_note'       => '用户注册成功自动登陆',
             ];
             LogUtils::userRunningLog($userRunningData);
-
             $sessionData = [
                 'uid'       => $uid,
                 'user_name' => $user_name,
             ];
             // 存入登陆信息
-            Session::set('withsawyer_user_info', $sessionData);
-            $this->ajaxReturn($checkVerifyCode['retCode'], $checkVerifyCode['retMsg']);
+            Session::set($this->session_user_info_name, $sessionData);
+            $this->ajaxReturn(MsgConst::SUCCESS_CODE, '注册成功，页面即将跳转...');
         } else {
             $this->_empty();
         }
     }
 
+
+    /**
+     * 生成验证码图片
+     */
+    public function validateCodeImage()
+    {
+        Loader::import('ValidateCodeTool', APP_PATH . 'common/tools/');
+        $ValidateCode = new ValidateCode(4, 165, 42);
+        $ValidateCode->doimg();
+        $strLoginValidateCode = $ValidateCode->getCode();
+        Session::set('GraphicValidateCode', $strLoginValidateCode);
+        return $strLoginValidateCode;
+    }
 
     /**
      * 验证验证码是否正确
@@ -261,14 +328,22 @@ class User extends BaseController
                 'retMsg'  => '发送失败',
             ];
         }
+
+        // 检查邮箱是否被注册
+        $checkUserRes = Db::name('user_manage')->where('u_state', 'NEQ', MsgConst::DELETE_CODE)->where('u_email', 'EQ', $source)->count();
+        if ($checkUserRes > 0) {
+            return [
+                'retCode' => MsgConst::FAIL_CODE,
+                'retMsg'  => '邮箱已被注册',
+            ];
+        }
         $nowTime = time();
         $verifyValidateModel = Db::name('verify_validate');
-        $findRes = $verifyValidateModel->fetchSql(true)->where([
+        $findRes = $verifyValidateModel->fetchSql(false)->where([
             'v_source' => ['EQ', $source],
         ])->whereOr([
             'v_client_ip' => ['EQ', $clientIp],
         ])->order('id desc')->find();
-        dump($findRes);die;
         // 十秒内不要频繁发送
         $VERIFY_SEND_INTERVAL_TIMES = Config::get('VERIFY_SEND_INTERVAL_TIMES');
         if ($findRes && (intval($findRes['v_time']) > intval($nowTime + $VERIFY_SEND_INTERVAL_TIMES))) {

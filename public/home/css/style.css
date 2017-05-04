@@ -254,8 +254,10 @@
 .login_input_box::-moz-placeholder { color: #FFFFFF !important;}
 .login_input_box:-ms-input-placeholder {color: #FFFFFF !important;}
 .Verify_input { width: 45%;display: inline-block;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;} /*验证码按钮*/
+.Graphic-Verify-box { width: 38%;height: 40px;border-radius: 6px;overflow: hidden;-moz-box-shadow: 0 15px 30px 0 rgba(255,255,255,.25) inset,0 2px 7px 0 rgba(0,0,0,.2);-webkit-box-shadow: 0 15px 30px 0 rgba(255,255,255,.25) inset, 0 2px 7px 0 rgba(0,0,0,.2); box-shadow: 0 15px 30px 0 rgba(255,255,255,.25) inset, 0 2px 7px 0 rgba(0,0,0,.2);} /*图形验证码的盒子*/
+.Graphic-Verify-box img{ width: 100%;height: 100%} /*图形验证码的盒子*/
 .from_Btn { width: 30%;} /*登录注册按钮宽度*/
-.login_btn { height: 40px;background: #0094FD;border-radius: 6px;-moz-border-radius: 6px;-webkit-border-radius: 6px;display: block;color: #FFFFFF;-o-transition: all .2s;-moz-transition: all .2s;-webkit-transition: all .2s;-ms-transition: all .2s;border: none;text-shadow: 0 1px 2px rgba(0,0,0,.1);-moz-box-shadow: 0 15px 30px 0 rgba(255,255,255,.25) inset,0 2px 7px 0 rgba(0,0,0,.2);-webkit-box-shadow: 0 15px 30px 0 rgba(255,255,255,.25) inset, 0 2px 7px 0 rgba(0,0,0,.2); box-shadow: 0 15px 30px 0 rgba(255,255,255,.25) inset, 0 2px 7px 0 rgba(0,0,0,.2);font-size: 14px}
+.login_btn { height: 40px;background: #0094FD;border-radius: 6px;-moz-border-radius: 6px;-webkit-border-radius: 6px;display: block;color: #FFFFFF;-o-transition: all .2s;-moz-transition: all .2s;-webkit-transition: all .2s;-ms-transition: all .2s;border: none;text-shadow: 0 1px 2px rgba(0,0,0,.1);-moz-box-shadow: 0 15px 30px 0 rgba(255,255,255,.25) inset,0 2px 7px 0 rgba(0,0,0,.2);-webkit-box-shadow: 0 15px 30px 0 rgba(255,255,255,.25) inset, 0 2px 7px 0 rgba(0,0,0,.2); box-shadow: 0 15px 30px 0 rgba(255,255,255,.25) inset, 0 2px 7px 0 rgba(0,0,0,.2);font-size: 14px;letter-spacing: 2px;}
 
 .login_btn:hover { -moz-box-shadow: 0 15px 30px 0 rgba(255,255,255,.15) inset, 0 2px 7px 0 rgba(0,0,0,.2); -webkit-box-shadow: 0 15px 30px 0 rgba(255,255,255,.15) inset,0 2px 7px 0 rgba(0,0,0,.2);box-shadow: 0 15px 30px 0 rgba(255,255,255,.15) inset,0 2px 7px 0 rgba(0,0,0,.2);}
 
@@ -270,10 +272,12 @@
     .from_Btn { width: 70%;}
     .redirect_reg { margin: 4% auto;}
     .login_spacing { margin: 5% auto;}
+    .Graphic-Verify-box { width: 40%}
 }
 
 @media only screen and (min-width: 1824px) {
     .login_title { font-size: 20px;}
     .login_input { width: 25%;}
     .from_Btn { width: 25%;}
+    .Graphic-Verify-box { width: 35%}
 }

@@ -14,6 +14,7 @@ class BaseController extends Controller
 {
     protected $START_TIME = '';             // 程序开始执行的时间
     protected $arrWebPage = [];             // 网站基本信息
+    protected $session_user_info_name = []; // 用户信息session名称
     protected $arrUserInfo = [];            // 用户登陆信息
     private $current_controller_name;       // 当前操作的控制器
     private $current_action_name;           // 当前操作的方法名
@@ -61,14 +62,19 @@ class BaseController extends Controller
     private function checkAuth()
     {
         // 获取用户session信息
-        $this->arrUserInfo = Session::get('withsawyer_user_info');
+        $this->session_user_info_name = Config::get('SESSION_USER_INFO_NAME');
+        $this->arrUserInfo = Session::get($this->session_user_info_name);
         // 检查当前访问的控制器是否存在
         if (array_key_exists($this->current_controller_name, $this->access_permission)) {
             // 检查当前访问的方法名如果不在定义中就需要登陆
             if (!in_array($this->current_action_name, $this->access_permission[$this->current_controller_name])) {
-                if (false === Session::has('withsawyer_user_info') || empty($this->arrUserInfo['uid'])) {
-                    $this->redirect(url('/login'));
+                if (false === Session::has($this->session_user_info_name) || !_checkInt($this->arrUserInfo['uid'])) {
+//                    $this->redirect(url('/login/view'));
                 }
+            } elseif (in_array($this->current_action_name, $this->access_permission[$this->current_controller_name])) {
+//                if (true === Session::has($this->session_user_info_name) || _checkInt($this->arrUserInfo['uid'])) {
+//                    $this->redirect(url('/index'));
+//                }
             }
         } else {
             // 否则404

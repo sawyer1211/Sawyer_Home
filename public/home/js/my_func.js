@@ -7,15 +7,13 @@
  * 发送验证码按钮定时事件
  * @param element
  */
-var countdown = 5;
+var countdown = 120;
 function settime(element) {
     var obj_send = $("#" + element);
     if (countdown == 0) {
         obj_send.attr("disabled", false);
         obj_send.text("重新获取验证码");
-        //clearTimeout(timeIndex);
-        //timeIndex = null;
-        countdown = 5;
+        countdown = 120;
         return;
     } else {
         obj_send.unbind("mouseenter").unbind("mouseleave");

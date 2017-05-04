@@ -29,18 +29,25 @@ class User extends BaseModel
     /**
      * 提交注册信息
      * @param $data
+     * @return array
      */
     public function doRegister($data)
     {
-        $checkUserRes = $this->fetchSql(true)->where('u_state', 'NEQ', MsgConst::DELETE_CODE)->whereOr('u_email', $data['u_email'])->where("u_user_name", $data['u_user_name'])->count();
-        dump($checkUserRes);die;//
-
+        $checkUserRes = $this->fetchSql(false)->where('u_state', 'NEQ', MsgConst::DELETE_CODE)->whereOr('u_email', 'EQ', $data['u_email'])->where("u_user_name", 'EQ', $data['u_user_name'])->count();
+        if ($checkUserRes > 0) {
+            return $this->arrayReturn(MsgConst::FAIL_CODE, '用户已存在');
+        }
         $result = $this->insert($data);
         if (false === $result) {
-            $this->arrayReturn(MsgConst::FAIL_CODE, '注册失败');
+            return $this->arrayReturn(MsgConst::FAIL_CODE, '注册失败');
         } else {
-            $this->arrayReturn(MsgConst::SUCCESS_CODE, '注册成功');
+            return $this->arrayReturn(MsgConst::SUCCESS_CODE, '注册成功');
         }
+    }
+
+    public function doLogin($data)
+    {
+
     }
 
 

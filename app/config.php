@@ -261,10 +261,10 @@ $configArr = [
         'smtp_port'       => 465,                       //SSL连接SMTP服务器的远程服务器端口号 可选465或587
         'smtp_helo'       => 'Hello,My Friend !',       //设置SMTP的helo消息头 这个可有可无 内容任意
         'smtp_charset'    => 'UTF-8',                   // 设置发送的邮件的编码 可选GB2312 我喜欢utf-8 据说utf8在某些客户端收信下会乱码
-        'smtp_from_email' => 'issawyer@withsawyer.cn',   // 设置发件人邮箱地址 这里填入上述提到的“发件人邮箱”
-        'smtp_user_name'  => '472973618@qq.com',        // SMTP登录的账号 这里填入字符串格式的qq号即可
+        'smtp_from_email' => 'sawyer@withsawyer.cn',   // 设置发件人邮箱地址 这里填入上述提到的“发件人邮箱”
+        'smtp_user_name'  => '707787743@qq.com',        // SMTP登录的账号 这里填入字符串格式的qq号即可
         'smtp_from_name'  => "Sawyer'Home",             // 设置发件人姓名（昵称） 任意内容，显示在收件人邮件的发件人邮箱地址前的发件人姓名
-        'smtp_password'   => 'urndhxlyxvkobifb',        // SMTP登录的密码 这里填入“独立密码” 若为设置“独立密码”则填入登录qq的密码 建议设置“独立密码”
+        'smtp_password'   => 'izdbvteprsaebfgf',        // SMTP登录的密码 这里填入“独立密码” 若为设置“独立密码”则填入登录qq的密码 建议设置“独立密码”
         'smtp_is_html'    => true,                      // 邮件正文是否为html编码 true或false
     ],
 
