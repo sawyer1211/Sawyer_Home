@@ -83,12 +83,17 @@ class User extends BaseController
             $password = _myMd5($password, Config::get('PASS_ENCRYPT_TIMES'));
             $checkUserRes = Db::name('user_manage')->fetchSql(false)->where('u_state', 'NEQ', MsgConst::DELETE_CODE)->where('u_password', 'EQ', $password)->whereOr('u_email', 'EQ', $account)->where("u_user_name", 'EQ', $account)->find();
             if (!$checkUserRes) {
-                return $this->arrayReturn(MsgConst::FAIL_CODE, '帐号或密码错误，请重试...');
+                // 登录出错 重试次数+1 等于3的时候就需要验证码了
+                $errRetryNum += 1;
+                Session::set('errRetryNum', $errRetryNum);
+                $this->ajaxReturn(MsgConst::FAIL_CODE, '帐号或密码错误，请重试...', [
+                    'errRetryNum' => $errRetryNum,
+                ]);
             }
 
             $userRunningData = [
                 'ur_uid'        => $checkUserRes['uid'],
-                'ur_user_name'  => $checkUserRes['user_name'],
+                'ur_user_name'  => $checkUserRes['u_user_name'],
                 'ur_client_ip'  => _getClientIp(),
                 'ur_login_time' => $this->nowTime,
                 'ur_note'       => '用户登陆',
@@ -96,10 +101,12 @@ class User extends BaseController
             LogUtils::userRunningLog($userRunningData);
             $sessionData = [
                 'uid'       => $checkUserRes['uid'],
-                'user_name' => $checkUserRes['user_name'],
+                'user_name' => $checkUserRes['u_user_name'],
             ];
             // 存入登陆信息
             Session::set($this->session_user_info_name, $sessionData);
+            // 登录成功后重试次数就清零
+            Session::set('errRetryNum', 0);
             $this->ajaxReturn(MsgConst::SUCCESS_CODE, '注册成功，页面即将跳转...');
         } else {
             $this->_empty();
@@ -251,6 +258,8 @@ class User extends BaseController
             ];
             // 存入登陆信息
             Session::set($this->session_user_info_name, $sessionData);
+            // 登录成功后重试次数就清零
+            Session::set('errRetryNum', 0);
             $this->ajaxReturn(MsgConst::SUCCESS_CODE, '注册成功，页面即将跳转...');
         } else {
             $this->_empty();

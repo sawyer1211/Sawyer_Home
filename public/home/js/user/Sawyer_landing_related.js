@@ -92,6 +92,7 @@ $(document).ready(function () {
                 })
             } else {
                 showMsg(json.retMsg);
+                layer.close(loadIndex);
             }
         });
     });
@@ -118,7 +119,7 @@ $(document).ready(function () {
             return false;
         }
         // 加载中......
-        // var loadIndex = layer.load(2);
+        var loadIndex = layer.load(2);
         $.post(web_url + 'doLogin/doLogin.html', {
             account: $account.val(),
             password: $password.val(),
@@ -127,6 +128,15 @@ $(document).ready(function () {
                 layer.msg(json.retMsg, {time: 2000}, function () {
                     window.location.href = web_url + 'index.html';
                 });
+                return false;
+            } else {
+                layer.msg(json.retMsg, {time: 2000}, function () {
+                    layer.closeAll();
+                });
+                if (json['data']['errRetryNum'] > 3) {
+                    $('#Graphic-Verify-Div').show();
+                }
+                return false;
             }
         });
 
