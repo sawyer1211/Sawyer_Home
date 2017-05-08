@@ -15,8 +15,11 @@ return [
         'name' => '\w+',
     ],
 
+
     // 首页
     'index'             => 'home/index/index',
+    // 文章详情
+    'details/:id'       => ['home/index/articleDetails', ['method' => 'get'], ['id' => '^[1-9][0-9]*$']],
     // 登陆页面
     'login/:visit'      => ['home/user/login', ['method' => 'get'], ['visit' => '\w*']],
     // 提交登录登陆页面
@@ -29,4 +32,6 @@ return [
     'sendVerify'        => 'home/user/sendVerify',
     // 图形验证码
     'GraphicVerifyCode' => 'home/user/validateCodeImage',
+    // 注销登录
+    'log-on'            => 'home/user/logout',
 ];

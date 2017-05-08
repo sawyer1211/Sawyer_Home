@@ -14,6 +14,7 @@ return [
     'type'            => 'mysql',
     // 服务器地址
     'hostname'        => '122.114.42.22',
+//    'hostname'        => 'localhost',
     // 数据库名
     'database'        => 'www_withsawyer_cn',
     // 用户名

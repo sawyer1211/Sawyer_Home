@@ -283,6 +283,15 @@ class User extends BaseController
     }
 
     /**
+     * 登出
+     */
+    public function logout()
+    {
+        Session::set($this->session_user_info_name, Null);
+        $this->redirect(url('/login/view'));
+    }
+
+    /**
      * 验证验证码是否正确
      * @param        $source
      * @param        $verifyCode
