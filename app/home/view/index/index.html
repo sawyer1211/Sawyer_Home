@@ -16,24 +16,14 @@
         <div class="Hot_title">热门话题</div>
     </div>
     <div class="Hot">
+        {volist name='$articleListData' id='vo' offset="1" length='5'}
         <div class="Hot_line animated fadeInUp">
-            <a href="{:url('/details/2')}">
-                <div class="project_title">asdsad</div>
-                <div class="project_info">asdsa</div>
+            <a href="{:url('/details/'.$vo.id)}">
+                <div class="project_title">{$vo.title}</div>
+                <div class="project_info">{$vo.label_name}</div>
             </a>
         </div>
-        <div class="Hot_line animated fadeInUp">
-            <a href="#">
-                <div class="project_title">asdsad</div>
-                <div class="project_info">asdsa</div>
-            </a>
-        </div>
-        <div class="Hot_line animated fadeInUp">
-            <a href="#">
-                <div class="project_title">asdsad</div>
-                <div class="project_info">asdsa</div>
-            </a>
-        </div>
+        {/volist}
         <div class="Hot_line animated fadeInUp">
             <a href="#">
                 <div class="project_title">更多话题</div>
@@ -44,7 +34,7 @@
 </div>
 <div class="Footer">
     <div class="Footer_inner animated fadeInUp">
-        <div class="">Welcome To <a href="">WithSawyer</a></div>
+        <div class="">Welcome To <a href="#">WithSawyer</a></div>
     </div>
 </div>
 </body>
