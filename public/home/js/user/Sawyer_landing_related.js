@@ -34,7 +34,7 @@ $(document).ready(function () {
         }
     })
 
-    // 关联回车按键确认
+    // 关联回车按键确认//
     $(document).on('keydown', function (event) {
         if (event.keyCode == 13) {
             var $loginBtn = $('#do-login-btn');
