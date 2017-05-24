@@ -34,6 +34,22 @@ $(document).ready(function () {
         }
     })
 
+    // 关联回车按键确认
+    $(document).on('keydown', function (event) {
+        if (event.keyCode == 13) {
+            var $loginBtn = $('#do-login-btn');
+            var $registerBtn = $('#register-btn');
+            if ($loginBtn.length > 0) {
+                $loginBtn.click();
+                return false;
+            }
+            if ($registerBtn.length > 0) {
+                $registerBtn.click();
+                return false;
+            }
+        }
+    });
+
     // 提交注册信息
     $(document).on('click', '#register-btn', function () {
         // var $nickname = $('#nickname');
@@ -102,7 +118,6 @@ $(document).ready(function () {
         // var $nickname = $('#nickname');
         var $account = $('#account');
         var $password = $('#password');
-        console.log($account.val());
         if (!_checkUserName($account.val()) && !_checkEmail($account.val())) {
             $account.focus();
             showMsg('请输入用户名或者邮箱');
@@ -151,6 +166,6 @@ $(document).ready(function () {
         }
         newUrl = url + '?' + Math.floor(Math.random() * 10) + Math.floor(Math.random() * 10);
         $(this).attr('src', newUrl);
-    })
+    });
 
 });

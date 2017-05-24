@@ -26,7 +26,7 @@ class BaseController extends Controller
             '',
         ],
         'User'  => [
-            'login', 'register', 'sendVerify', 'validateCodeImage',
+            'login', 'register', 'sendVerify', 'validateCodeImage', 'resume', 'shuKeResume', 'shuKeResumeSendEmail',
         ],
     ];
 

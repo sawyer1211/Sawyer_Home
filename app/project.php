@@ -8,11 +8,12 @@
  */
 if (!defined('THINK_PATH')) exit();
 return [
-    'APP_NAME'                             => "Sawyer'Home",                                // 项目名称
-    'VERSION_NUMBER'                       => '1.0',                                        // 版本号
-    'PASS_ENCRYPT_TIMES'                   => 3,                                            // 密码加密次数（不可更改）
-    'tokenRefresh'                         => 600000,                                       // token过期时间
-    'isTest'                               => 1,                                            // 0-生产模式 1-开发模式
+    'APP_NAME'           => "Sawyer'Home",                                // 项目名称
+    'VERSION_NUMBER'     => '1.0',                                        // 版本号
+    'PASS_ENCRYPT_TIMES' => 3,                                            // 密码加密次数（不可更改）
+    'tokenRefresh'       => 600000,                                       // token过期时间
+    'isTest'             => 1,                                            // 0-生产模式 1-开发模式
+    'app_debug'                            => true,                      // 应用调试模式
     'SESSION_USER_INFO_NAME'               => 'withsawyer_user_info',                       // 用户session名称
     'SEND_VERIFY_TYPE'                     => 'EMAIL',                                      // 发送验证码类型【MOBILE-手机 EMAIL-邮箱】
     'SEND_VERIFY_TYPE_CORRESPONDING_VALUE' => [                                             // 发送验证码类型对应状态

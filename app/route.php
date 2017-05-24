@@ -10,6 +10,13 @@
 // +----------------------------------------------------------------------
 use think\Route;
 
+// 我的简历
+Route::rule('Sawyer_resume', 'home/user/resume');
+// 舒克懒懒的简历
+Route::rule('Shuke_resume', 'home/user/shuKeResume');
+// 舒克懒懒费事，还要发邮件
+Route::rule('send_shuke', 'home/user/shuKeResumeSendEmail');
+
 return [
     '__pattern__'       => [
         'name' => '\w+',
@@ -17,6 +24,7 @@ return [
 
 
     // 首页
+    '/'                 => 'home/index/index',
     'index'             => 'home/index/index',
     // 文章详情
     'details/:id'       => ['home/index/articleDetails', ['method' => 'get'], ['id' => '^[1-9][0-9]*$']],

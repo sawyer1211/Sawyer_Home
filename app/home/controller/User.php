@@ -395,4 +395,72 @@ class User extends BaseController
 
     }
 
+    public function resume()
+    {
+        return $this->view->fetch('resume/index');
+    }
+
+    public function shuKeResume()
+    {
+        return $this->view->fetch('resume/shuke');
+    }
+
+    public function shuKeResumeSendEmail()
+    {
+
+        $address = 'shuke@withsawyer.cn';
+        $subject = '舒克懒懒，有人想联系联系你';
+        $send_name = trim(input('post.name'));
+        $send_email = trim(input('post.email'));
+        $send_message = trim(input('post.message'));
+        $client_ip = _getClientIp();
+        // 判断一下数据合法性
+        if (empty($send_name)) {
+            $this->ajaxReturn(MsgConst::FAIL_CODE, "<div class='error_message'>请填写姓名</div>");
+        }
+        if (!_checkEmail($send_email)) {
+            $this->ajaxReturn(MsgConst::FAIL_CODE, "<div class='error_message'>请填写正确的Emai</l地址");
+        }
+        if (empty($send_message)) {
+            $this->ajaxReturn(MsgConst::FAIL_CODE, "<div class='error_message'>请输入想对我说的内容</div>");
+        }
+        Request::instance()->ip();
+        $runningModel = Db::name('verify_validate');
+        $runningData = $runningModel->field('v_time')->where([
+            'v_source' => ['EQ', $send_email],
+        ])->order('id DESC')->find();
+
+        $runningData2 = $runningModel->field('v_time')->where([
+            'v_client_ip' => ['EQ', $client_ip],
+        ])->order('id DESC')->find();
+        if ($this->nowTime - $runningData['v_time'] <= 60) {
+            $this->ajaxReturn(MsgConst::FAIL_CODE, "<div class='error_message'>请不要频繁发送消息</div>");
+        }
+        if ($this->nowTime - $runningData2['v_time'] <= 60) {
+            $this->ajaxReturn(MsgConst::FAIL_CODE, "<div class='error_message'>请不要频繁发送消息</div>");
+        }
+        // 拼接要发送的参数
+        $send_msn = '姓名：' . $send_name . '<br/>Email：' . $send_email . '<br/><br/>消息：' . $send_message;
+        $param = [
+            'addAddress' => $address,
+            'subject'    => $subject,
+            'content'    => $send_msn,
+        ];
+        // 记录一下日志
+        $runningModel->insert([
+            'v_source'     => $send_email,
+            'v_code'       => '舒克懒懒的简历',
+            'v_check_code' => '有人发邮件给她',
+            'v_time'       => $this->nowTime,
+            'v_temp_name'  => '我记录一下',
+            'v_client_ip'  => $client_ip,
+        ]);
+        $result = _sendEmail($param);
+        if (!$result) {
+            $this->ajaxReturn(MsgConst::FAIL_CODE, '发送失败');
+        } else {
+            $this->ajaxReturn(MsgConst::SUCCESS_CODE, '发送成功');
+        }
+    }
+
 }
