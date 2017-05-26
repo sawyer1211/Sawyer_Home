@@ -24,7 +24,7 @@ $(document).ready(function () {
                 btn_verify_code: btnVerifyCode
             }, function (json) {
                 console.log(json);
-                if (json.retCode == '1') {
+                if (json.retCode == 1) {
                     showMsg(json.retMsg);
                 } else {
                     showMsg(json.retMsg);
@@ -32,7 +32,7 @@ $(document).ready(function () {
                 verify_btn_flag = true;
             });
         }
-    })
+    });
 
     // 关联回车按键确认//
     $(document).on('keydown', function (event) {

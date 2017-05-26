@@ -18,28 +18,28 @@ Route::rule('Shuke_resume', 'home/user/shuKeResume');
 Route::rule('send_shuke', 'home/user/shuKeResumeSendEmail');
 
 return [
-    '__pattern__'       => [
+    '__pattern__'         => [
         'name' => '\w+',
     ],
 
 
     // 首页
-    '/'                 => 'home/index/index',
-    'index'             => 'home/index/index',
+    '/'                   => 'home/index/index',
+    'index'               => 'home/index/index',
     // 文章详情
-    'details/:id'       => ['home/index/articleDetails', ['method' => 'get'], ['id' => '^[1-9][0-9]*$']],
+    'details/:id/[:flip]' => ['home/index/articleDetails', ['method' => 'get'], ['id' => '^[1-9][0-9]*$', 'flip' => '^turn_right|turn_left$']],
     // 登陆页面
-    'login/:visit'      => ['home/user/login', ['method' => 'get'], ['visit' => '\w*']],
+    'login/:visit'        => ['home/user/login', ['method' => 'get'], ['visit' => '\w*']],
     // 提交登录登陆页面
-    'doLogin/:visit'    => ['home/user/login', ['method' => 'get|post'], ['visit' => '\w*']],
+    'doLogin/:visit'      => ['home/user/login', ['method' => 'get|post'], ['visit' => '\w*']],
     // 注册页面
-    'enroll/:visit'     => ['home/user/register', ['method' => 'get'], ['visit' => '\w*']],
+    'enroll/:visit'       => ['home/user/register', ['method' => 'get'], ['visit' => '\w*']],
     // 提交注册地址
-    'doRgt/:visit'      => ['home/user/register', ['method' => 'get|post'], ['visit' => '\w*']],
+    'doRgt/:visit'        => ['home/user/register', ['method' => 'get|post'], ['visit' => '\w*']],
     // 发送验证码
-    'sendVerify'        => 'home/user/sendVerify',
+    'sendVerify'          => 'home/user/sendVerify',
     // 图形验证码
-    'GraphicVerifyCode' => 'home/user/validateCodeImage',
+    'GraphicVerifyCode'   => 'home/user/validateCodeImage',
     // 注销登录
-    'log-on'            => 'home/user/logout',
+    'log-on'              => 'home/user/logout',
 ];

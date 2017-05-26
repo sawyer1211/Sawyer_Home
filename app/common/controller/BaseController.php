@@ -45,14 +45,24 @@ class BaseController extends Controller
      */
     public function _initialize()
     {
-        $this->test = Config::get('isTest');                                   // 当前项目模式【0-生产模式 1-开发模式】
-        $this->nowTime = time();                                                      // 当前时间戳
-        $this->START_TIME = explode(' ', microtime());                      // 程序开始的微秒
-        $this->current_action_name = $this->request->action();
+        // 当前项目模式【0-生产模式 1-开发模式】
+        $this->test = Config::get('isTest');
+        // 记录一下网站访问量
+        if ($this->test != 1) {
+            $this->_resumeRecord('withsawyer');
+        }
+        // 当前时间戳
+        $this->nowTime = time();
+        // 程序开始的微秒
+        $this->START_TIME = explode(' ', microtime());
         $this->current_controller_name = $this->request->controller();
-        $this->arrWebPage = $this->getWebPageInfo(true);                     // 获取网站信息
-        $this->assign('arrWebPage', $this->arrWebPage);                        // 定义变量
-        $this->checkAuth();                                                           // 自动验证登陆信息
+        $this->current_action_name = $this->request->action();
+        // 获取网站信息
+        $this->arrWebPage = $this->getWebPageInfo(true);
+        // 定义网站信息变量
+        $this->assign('arrWebPage', $this->arrWebPage);
+        // 自动验证登陆信息
+        $this->checkAuth();
     }
 
     /**
@@ -140,6 +150,21 @@ class BaseController extends Controller
     public function _empty()
     {
         return $this->view->fetch('common/404');
+    }
+
+
+    /**
+     * 记录一下下访问量
+     * @param $name
+     * @return int|string
+     */
+    protected function _resumeRecord($name)
+    {
+        $result = Db::name('resume_record')->fetchSql(false)->where([
+            'rs_name' => $name,
+        ])->inc('rs_times')->exp('rs_time', 'now()')->update();
+        return $result;
+
     }
 
 

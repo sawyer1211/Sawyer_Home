@@ -21,7 +21,7 @@ class ValidateCode
         $this->width = $width;
         $this->height = $height;
         $this->fontSize = $fontSize;
-        $this->font = APP_ROOT . 'public/home/font/elephant.ttf';//注意字体路径要写对，否则显示不了图片
+        $this->font = APP_ROOT . 'public/home/font/Elephant.ttf';   //注意字体路径要写对，否则显示不了图片
     }
 
     //生成随机码

@@ -82,7 +82,7 @@
 
         //如果自定义，最好给p标签如下的行高，要不输入中文时，会有跳动感
         //,initialStyle:'p{line-height:1em}'//编辑器层级的基数,可以用来改变字体等
-        
+
         //,iframeCssUrl: URL + '/themes/iframe.css' //给编辑区域的iframe引入一个css文件
 
         //indentValue
@@ -325,7 +325,6 @@
         //,tableDragable: true
 
 
-
         //sourceEditor
         //源码的查看方式,codemirror 是代码高亮，textarea是文本框,默认是codemirror
         //注意默认codemirror只能在ie8+和非ie中使用
@@ -355,78 +354,78 @@
         //,allowDivTransToP:true      //允许进入编辑器的div标签自动变成p标签
         //,rgb2Hex:true               //默认产出的数据中的color自动从rgb格式变成16进制格式
 
-		// xss 过滤是否开启,inserthtml等操作
-		,xssFilterRules: true
-		//input xss过滤
-		,inputXssFilter: true
-		//output xss过滤
-		,outputXssFilter: true
-		// xss过滤白名单 名单来源: https://raw.githubusercontent.com/leizongmin/js-xss/master/lib/default.js
-		,whitList: {
-			a:      ['target', 'href', 'title'],
-			abbr:   ['title'],
-			address: [],
-			area:   ['shape', 'coords', 'href', 'alt'],
-			article: [],
-			aside:  [],
-			audio:  ['autoplay', 'controls', 'loop', 'preload', 'src'],
-			b:      [],
-			bdi:    ['dir'],
-			bdo:    ['dir'],
-			big:    [],
-			blockquote: ['cite'],
-			br:     [],
-			caption: [],
-			center: [],
-			cite:   [],
-			code:   [],
-			col:    ['align', 'valign', 'span', 'width'],
-			colgroup: ['align', 'valign', 'span', 'width'],
-			dd:     [],
-			del:    ['datetime'],
-			details: ['open'],
-			div:    [],
-			dl:     [],
-			dt:     [],
-			em:     [],
-			font:   ['color', 'size', 'face'],
-			footer: [],
-			h1:     [],
-			h2:     [],
-			h3:     [],
-			h4:     [],
-			h5:     [],
-			h6:     [],
-			header: [],
-			hr:     [],
-			i:      [],
-			img:    ['src', 'alt', 'title', 'width', 'height', 'id', '_src', 'loadingclass'],
-			ins:    ['datetime'],
-			li:     [],
-			mark:   [],
-			nav:    [],
-			ol:     [],
-			p:      [],
-			pre:    [],
-			s:      [],
-			section:[],
-			small:  [],
-			span:   [],
-			sub:    [],
-			sup:    [],
-			strong: [],
-			table:  ['width', 'border', 'align', 'valign'],
-			tbody:  ['align', 'valign'],
-			td:     ['width', 'rowspan', 'colspan', 'align', 'valign'],
-			tfoot:  ['align', 'valign'],
-			th:     ['width', 'rowspan', 'colspan', 'align', 'valign'],
-			thead:  ['align', 'valign'],
-			tr:     ['rowspan', 'align', 'valign'],
-			tt:     [],
-			u:      [],
-			ul:     [],
-			video:  ['autoplay', 'controls', 'loop', 'preload', 'src', 'height', 'width']
-		}
+        // xss 过滤是否开启,inserthtml等操作
+        , xssFilterRules: true
+        //input xss过滤
+        , inputXssFilter: true
+        //output xss过滤
+        , outputXssFilter: true
+        // xss过滤白名单 名单来源: https://raw.githubusercontent.com/leizongmin/js-xss/master/lib/default.js
+        , whitList: {
+            a: ['target', 'href', 'title'],
+            abbr: ['title'],
+            address: [],
+            area: ['shape', 'coords', 'href', 'alt'],
+            article: [],
+            aside: [],
+            audio: ['autoplay', 'controls', 'loop', 'preload', 'src'],
+            b: [],
+            bdi: ['dir'],
+            bdo: ['dir'],
+            big: [],
+            blockquote: ['cite'],
+            br: [],
+            caption: [],
+            center: [],
+            cite: [],
+            code: [],
+            col: ['align', 'valign', 'span', 'width'],
+            colgroup: ['align', 'valign', 'span', 'width'],
+            dd: [],
+            del: ['datetime'],
+            details: ['open'],
+            div: [],
+            dl: [],
+            dt: [],
+            em: [],
+            font: ['color', 'size', 'face'],
+            footer: [],
+            h1: [],
+            h2: [],
+            h3: [],
+            h4: [],
+            h5: [],
+            h6: [],
+            header: [],
+            hr: [],
+            i: [],
+            img: ['src', 'alt', 'title', 'width', 'height', 'id', '_src', 'loadingclass'],
+            ins: ['datetime'],
+            li: [],
+            mark: [],
+            nav: [],
+            ol: [],
+            p: [],
+            pre: [],
+            s: [],
+            section: [],
+            small: [],
+            span: [],
+            sub: [],
+            sup: [],
+            strong: [],
+            table: ['width', 'border', 'align', 'valign'],
+            tbody: ['align', 'valign'],
+            td: ['width', 'rowspan', 'colspan', 'align', 'valign'],
+            tfoot: ['align', 'valign'],
+            th: ['width', 'rowspan', 'colspan', 'align', 'valign'],
+            thead: ['align', 'valign'],
+            tr: ['rowspan', 'align', 'valign'],
+            tt: [],
+            u: [],
+            ul: [],
+            video: ['autoplay', 'controls', 'loop', 'preload', 'src', 'height', 'width']
+        }
     };
 
     function getUEBasePath(docUrl, confUrl) {
@@ -439,7 +438,7 @@
 
         var configPath = document.getElementsByTagName('script');
 
-        return configPath[ configPath.length - 1 ].src;
+        return configPath[configPath.length - 1].src;
 
     }
 
@@ -466,7 +465,7 @@
 
     function optimizationPath(path) {
 
-        var protocol = /^[a-z]+:\/\//.exec(path)[ 0 ],
+        var protocol = /^[a-z]+:\/\//.exec(path)[0],
             tmp = null,
             res = [];
 
@@ -474,7 +473,7 @@
 
         path = path.replace(/\\/g, '/').split(/\//);
 
-        path[ path.length - 1 ] = "";
+        path[path.length - 1] = "";
 
         while (path.length) {
 

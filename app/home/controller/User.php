@@ -392,16 +392,22 @@ class User extends BaseController
                 'retMsg'  => '发送成功',
             ];
         }
-
     }
 
     public function resume()
     {
+        if ($this->test != 1) {
+            $this->_resumeRecord('sawyer');
+        }
         return $this->view->fetch('resume/index');
     }
 
     public function shuKeResume()
     {
+        if ($this->test != 1) {
+            $this->_resumeRecord('sawyer');
+        }
+        $this->_resumeRecord('shuke');
         return $this->view->fetch('resume/shuke');
     }
 
@@ -455,12 +461,18 @@ class User extends BaseController
             'v_temp_name'  => '我记录一下',
             'v_client_ip'  => $client_ip,
         ]);
-        $result = _sendEmail($param);
+        if ($this->test == 1) {
+            $result = true;
+        } else {
+            $result = _sendEmail($param);
+        }
         if (!$result) {
             $this->ajaxReturn(MsgConst::FAIL_CODE, '发送失败');
         } else {
             $this->ajaxReturn(MsgConst::SUCCESS_CODE, '发送成功');
         }
     }
+
+
 
 }
